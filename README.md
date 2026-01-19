@@ -1,150 +1,231 @@
 # C-tutorial-for-bro
-This repo is not for you... this is for bro. If you're not bro, don't open this repo
 
-Based off of The GNU C Reference Manual
+# Preface
 
-## The main function
+This document is a **modified derivative** of the *GNU C Reference Manual*. It is intended as a reference and instructional manual for the C programming language **as implemented by the GNU Compiler Collection (GCC)**, with additional clarification and reorganization for practical learning purposes.
 
-This function is needed for ever C program... without it, the program won't compile
+Specifically, this manual documents:
 
-You can do it in on of 2 ways:
+* The 1989 ANSI C standard, commonly known as **C89**, as the baseline language
+* Selected features of the 1990 ISO C standard (**C99**), to the extent that they are implemented by GCC
+The current state of **GNU extensions** to standard C
 
-```C
-int main(void) {...}
-```
+C89 is treated as the baseline throughout this manual. C99 features and GNU-specific extensions are **explicitly labeled** as such. Where behavior is implementation-defined, unspecified, or undefined, this is stated explicitly.
 
-if you're not using the Command-line interface (CLI)
+This manual is **not an official GNU document**. It does not claim to reflect current or future GCC policy. Statements regarding language features and compiler behavior describe the implementation as documented in the original GNU C Reference Manual and are adapted for explanatory clarity.
 
-or
+The C language includes a set of preprocessor directives used for macro replacement, conditional compilation, and file inclusion. While preprocessing is commonly described in C language manuals, the GNU C preprocessor is documented separately in *The C Preprocessor**, which covers preprocessing for C, C++, and Objective-C. As in the original manual, preprocessing is not described in detail here.
 
-```C
-int main(int argc, char *argv[]) {...}
-```
+This manual was **originally adapted for a specific friend (“bro”)** as a learning and reference aid. While written with that context in mind, the technical content is intended to remain precise, standards-aware, and suitable for general reference.
 
-if you need the CLI
+## Credits
 
-e.g.:
+### Original Work
 
-```C
-#include <stdio.h> // You must include this to use printf
+This document is based on the *GNU C Reference Manual*, distributed under the **GNU Free Documentation License (GFDL)**.
 
-int main(void)
-{
-    printf("hello, world\n");
-    return 0; // You can omit this... but returning in main makes me happy
-}
-```
+The following credits are preserved from the original work. These individuals contributed to the GNU C Reference Manual through editing, proofreading, ideas, typesetting, and administrivia:
 
-The return type is what goes before the function name... in main's case, it's int... and it can only be int for main tbh.
+Diego Andres Alvarez Marin, Nelson H. F. Beebe, Karl Berry, Robert Chassell, Hanfeng Chen, Mark de Volld, Antonio Diaz Diaz, dine, Andreas Foerster, Denver Gingerich, Lisa Goldstein, Robert Hansen, Jean-Christophe Helary, Mogens Hetsholm, Teddy Hogeborn, Joe Humphries, J. Wren Hunt, Dutch Ingraham, Adam Johansen, Vladimir Kadlec, Benjamin Kagia, Dright Kayorent, Sugun Kedambadi, Felix Lee, Bjorn Liencres, Steve Morningthunder, Aljosha Papsch, Matthew Plant, Jonathan Sisti, Richard Stallman, J. Otto Tennant, Ole Tetlie, Keith Thompson, T.F. Torrey, James Youngman, and Steve Zachar.
 
-## Lexical Elements
+In the original GNU C Reference Manual, **Trevis Rothwell** served as project maintainer and, along with **James Youngman**, wrote the bulk of the text.
 
-### Identifiers (e.g., variable names, function names, etc.)
+Some example programs in the original manual are based on algorithms from *The Art of Computer Programming* by **Donald Knuth**.
 
-Identifiers are sequences of characters used for naming variables, functions, new data types, and preprocessor macros. You can include letters, decimal digits, and the underscore character ‘_’ in identifiers.
+### Modifications
 
-The first character of an identifier cannot be a digit.
+This version has been **modified, reorganized, and extended** from the original GNU C Reference Manual. Changes include restructuring, additional explanations, clarifications, and pedagogical adjustments.
+
+These modifications were made by the current maintainer of this repository. Responsibility for any errors or omissions introduced by these changes lies solely with the modifier and not with the original GNU authors or contributors.
+
+## Note (not part of the specification):
+
+If you are here to nitpick wording, policy, or historical accuracy, you probably should have gone straight to the original *GNU C Reference Manual*.
+
+This version exists because *bro* wanted a modified one.
+
+If you are not bro, your complaints are politely acknowledged and equally politely ignored.
+
+# Lexical Elements
+
+This chapter describes the lexical elements that make up C source code after preprocessing. These elements are called tokens. There are five types of tokens: keywords, identifiers, constants, operators, and separators. White space, sometimes required to separate tokens, is also described in this chapter.
+
+* [Identifiers](#identifiers)
+* [Keywords](#keywords)
+* [Constants](#constants)
+* [Operators](#operators)
+* [Separators](#separators)
+* [White Space](#white-space)
+
+## Identifiers
+
+Identifiers are sequences of characters used for naming variables, functions, new data types, and preprocessor macros. You can include letters, decimal digits, and the underscore character `_` in identifiers.
+
+**IMPORTANT: The first character of an identifier cannot be a digit.**
 
 Lowercase letters and uppercase letters are distinct, such that foo and FOO are two different identifiers.
+
+When using GNU extensions, you can also include the dollar sign character ‘$’ in identifiers.
 
 e.g.:
 
 ```C
 // Correct
-int foo;
-int FOO;
-int foo_;
-int _foo;
-int foo_bar;
-int foo123;
+foo_bar_BAZ_123
 
 // Incorrect
-int 1_foo;
-int 1foo_;
+123_foo_bar
 ```
 
-### Keywords
+## Keywords
 
 Keywords are special identifiers reserved for use as part of the programming language itself. You cannot use them for any other purpose.
 
 Here is a list of keywords recognized by ANSI C89:
 
-```C
-auto break case char const continue default do double else enum extern
-float for goto if int long register return short signed sizeof static
-struct switch typedef union unsigned void volatile while
-```
+    auto break case char const continue default do double else enum extern
+    float for goto if int long register return short signed sizeof static
+    struct switch typedef union unsigned void volatile while
 
 ISO C99 adds the following keywords:
 
-```C
-inline _Bool _Complex _Imaginary
-```
+    inline _Bool _Complex _Imaginary
 
 and GNU extensions add these keywords:
 
-```C
-__FUNCTION__ __PRETTY_FUNCTION__ __alignof __alignof__ __asm
-__asm__ __attribute __attribute__ __builtin_offsetof __builtin_va_arg
-__complex __complex__ __const __extension__ __func__ __imag __imag__ 
-__inline __inline__ __label__ __null __real __real__ 
-__restrict __restrict__ __signed __signed__ __thread __typeof
-__volatile __volatile__ 
-```
+    __FUNCTION__ __PRETTY_FUNCTION__ __alignof __alignof__ __asm
+    __asm__ __attribute __attribute__ __builtin_offsetof __builtin_va_arg
+    __complex __complex__ __const __extension__ __func__ __imag __imag__ 
+    __inline __inline__ __label__ __null __real __real__ 
+    __restrict __restrict__ __signed __signed__ __thread __typeof
+    __volatile __volatile__
 
-Yes bro... you can't use these as variable, function, data type, or macro names.
+In both ISO C99 and C89 with GNU extensions, the following is also recognized as a keyword:
 
-### Constants
+    restrict
 
-A constant is a literal numeric or character value, such as 5 or 'm'. All constants are of a particular data type; you can use type casting to explicitly specify the type of a constant, or let the compiler use the default type based on the value of the constant.
+## Constants
 
-#### Integer Constants
+A constant is a literal numeric or character value, such as `5` or `m`. All constants are of a particular data type; you can use type casting to explicitly specify the type of a constant, or let the compiler use the default type based on the value of the constant.
 
-An integer constant is a sequence of digits, with an optional prefix to denote a number base.
+* [Integer Constants](#integer-constants)
+* [Character Constants](#character-constants)
+* [Real Number Constants](#real-number-constants)
+* [String Constants](#string-constants)
 
-If the sequence of digits is preceded by 0x or 0X (zero x or zero X), then the constant is considered to be hexadecimal (base 16). Hexadecimal values may use the digits from 0 to 9, as well as the letters a to f and A to F. Here are some examples:
-
-```C
-0x2f
-0x88
-0xAB43
-0xAbCd
-0x1
-```
-
-If the first digit is 0 (zero), and the next character is not ‘x’ or ‘X’, then the constant is considered to be octal (base 8). Octal values may only use the digits from 0 to 7; 8 and 9 are not allowed. Here are some examples:
-
-```C
-057
-012
-03
-0241
-```
-
-In all other cases, the sequence of digits is assumed to be decimal (base 10). Decimal values may use the digits from 0 to 9. Here are some examples:
-
-```
-459
-23901
-8
-12
-```
-
-There are various integer data types, for short integers, long integers, signed integers, and unsigned integers. You can force an integer constant to be of a long and/or unsigned integer type by appending a sequence of one or more letters to the end of the constant:
-
-```
-u
-U
-Unsigned integer type.
-
-l
-L
-Long integer type.
-```
-
-For example, 45U is an unsigned int constant. You can also combine letters: 45UL is an unsigned long int constant. (The letters may be used in any order.)
-
-Both ISO C99 and GNU C extensions add the integer types long long int and unsigned long long int. You can use two ‘L’s to get a long long int constant; add a ‘U’ to that and you have an unsigned long long int constant. For example: 45ULL.
-
-Bro... 0x00000000u is unsigned 0
-though this doesn't make sense... coz you can't represent negative values in HEXADECIMAL, as 0xFF is either the largest value in one byte, or -1.
+### Integer Constants
+### Character Constants
+### Real Number Constants
+### String Constants
+## Operators
+## Separators
+## White Space
+# Data Types
+## Primitive Data Types
+### Integer Types
+### Real Number Types
+### Complex Number Types
+#### Standard Complex Number Types
+#### GNU Extensions for Complex Number Types
+## Enumerations
+### Defining Enumerations
+### Declaring Enumerations
+## Unions
+### Defining Unions
+### Declaring Union Variables
+#### Declaring Union Variables at Definition
+#### Declaring Union Variables After Definition
+#### Initializing Union Members
+### Accessing Union Members
+### Size of Unions
+## Structures
+### Defining Structures
+### Declaring Structure Variables
+#### Declaring Structure Variables at Definition
+#### Declaring Structure Variables After Definition
+#### Initializing Structure Members
+### Accessing Structure Members
+### Bit Fields
+### Size of Structures
+## Arrays
+### Declaring Arrays
+### Initializing Arrays
+### Accessing Array Elements
+### Multidimensional Arrays
+### Arrays as Strings
+### Arrays of Unions
+### Arrays of Structures
+## Pointers
+### Declaring Pointers
+### Initializing Pointers
+### Pointers to Unions
+### Pointers to Structures
+## Incomplete Types
+## Type Qualifiers
+## Storage Class Specifiers
+### Renaming Types
+# Expressions and Operators
+## Expressions
+## Assignment Operators
+## Incrementing and Decrementing
+## Arithmetic Operators
+## Complex Conjugation
+## Comparison Operators
+## Logical Operators
+## Bit Shifting
+## Bitwise Logical Operators
+### Pointer Operators
+### The sizeof Operator
+### Type Casts
+### Array Subscripts
+### Function Calls as Expressions
+### The Comma Operator
+### Member Access Expressions
+### Conditional Expressions
+### Statements and Declarations in Expressions
+### Operator Precedence
+### Order of Evaluation
+#### Side Effects
+#### Sequence Points
+#### Sequence Points Constrain Expressions
+#### Sequence Points and Signal Delivery
+# Statements
+## Labels
+## Expression Statements
+## The if Statement
+## The switch Statement
+## The while Statement
+## The do Statement
+## The for Statement
+## Blocks
+## The Null Statement
+### The goto Statement
+### The break Statement
+### The continue Statement
+### The return Statement
+### The typedef Statement
+# Functions
+## Function Declarations
+## Function Definitions
+## Calling Functions
+## Function Parameters
+## Variable Length Parameter Lists
+## Calling Functions Through Function Pointers
+## The main Function
+## Recursive Functions
+## Static Functions
+### Nested Functions
+# Program Structure and Scope
+## Program Structure
+## Scope
+# A Sample Program
+## hello.c
+## system.h
+# Appendix A Overflow
+## Basics of Integer Overflow
+## Examples of Code Assuming Wraparound Overflow
+## Optimizations That Break Wraparound Arithmetic
+## Practical Advice for Signed Overflow Issues
+## Signed Integer Division and Integer Overflow
+# GNU Free Documentation License
+# Index
